@@ -46,7 +46,7 @@ class ScoreController {
             let donateDiv = document.createElement("div");
             donateDiv.style.marginTop = "100px";
             let donate = document.createElement("a");
-            donate.href = "/donate.html"
+            donate.href = "https://andreydem0505.github.io/Halloween/donate.html"
             donate.innerHTML = "Поддержать автора";
             donateDiv.appendChild(donate)
             div.appendChild(donateDiv);
