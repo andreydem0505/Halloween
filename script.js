@@ -68,15 +68,6 @@ class ScoreController {
     }
 }
 
-// initialize base elements
-let basket = document.getElementById("basket");
-const record = localStorage.getItem("record");
-document.getElementById("record").innerHTML = "Рекорд: " + (record == null ? "0" : record);
-const halfWidth = basket.offsetWidth / 2;
-const pumpkinSize = 50;
-let speed = 2;
-const scoreController = new ScoreController();
-
 function moveBasket(x) {
     if (x <= halfWidth)
         basket.style.left = '0';
@@ -85,11 +76,6 @@ function moveBasket(x) {
     else
         basket.style.left = x - halfWidth + 'px';
 }
-
-document.addEventListener("mousemove", e => moveBasket(e.pageX));
-
-// for the mobile device
-document.addEventListener("touchmove", e => moveBasket(e.changedTouches[0].clientX));
 
 // random x coordinate of the pumpkin
 function randomPumpkinX(pumpkin) {
@@ -114,7 +100,7 @@ function addPumpkin() {
             pumpkin.style.top = top + "px";
 
             // check the final position of the pumpkin
-            if (top >= window.innerHeight - 100 && pumpkin.x > basket.x && pumpkin.x < basket.x + basket.offsetWidth - pumpkinSize) {
+            if (top >= window.innerHeight - 100 && pumpkin.x > basket.x - 20 && pumpkin.x < basket.x + basket.offsetWidth - pumpkinSize + 20) {
                 top = -pumpkinSize;
                 randomPumpkinX(pumpkin);
                 scoreController.increaseScore(1);
@@ -127,6 +113,21 @@ function addPumpkin() {
     } catch (e) {}
 }
 
-addPumpkin();
-setInterval(() => addPumpkin(), 10_000);
-setInterval(() => speed += 1, 200_000);
+// initialize base elements
+let basket = document.getElementById("basket");
+const record = localStorage.getItem("record");
+document.getElementById("record").innerHTML = "Рекорд: " + (record == null ? "0" : record);
+const halfWidth = basket.offsetWidth / 2;
+const pumpkinSize = 50;
+let speed = 2;
+const scoreController = new ScoreController();
+
+document.addEventListener("mousemove", e => moveBasket(e.pageX));
+
+// for the mobile device
+document.addEventListener("touchmove", e => moveBasket(e.changedTouches[0].clientX));
+
+document.addEventListener("DOMContentLoaded", () => {
+    addPumpkin();
+    setInterval(() => addPumpkin(), 10_000);
+});
