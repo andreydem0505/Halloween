@@ -30,8 +30,11 @@ class ScoreController {
             // the record text is appeared if the game was the best one
             if (localStorage.getItem("record") < this.record) {
                 let recordH1 = document.createElement("h1");
+                let share = document.createElement("div");
                 recordH1.innerHTML = "Ваш новый рекорд: " + this.record;
+                share.innerHTML = VK.Share.button({title: 'Мой новый рекорд: ' + this.record}, {type: 'link', text: 'Поделиться'});
                 div.appendChild(recordH1);
+                div.appendChild(share);
                 localStorage.setItem("record", String(this.record));
             }
 
@@ -54,9 +57,10 @@ class ScoreController {
             document.body.appendChild(div);
 
             // stop all the intervals
-            let killId = setTimeout(function() {
-                for (let i = killId; i > 0; i--) clearInterval(i)
-            }, 100);
+            const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
+            for (let i = 1; i < interval_id; i++) {
+                window.clearInterval(i);
+            }
         } else
             this.score -= value;
         this.setScore();
@@ -69,8 +73,10 @@ class ScoreController {
 }
 
 function moveBasket(x) {
+    // left edge of the screen
     if (x <= halfWidth)
         basket.style.left = '0';
+    // right edge of the screen
     else if (x >= window.innerWidth - halfWidth)
         basket.style.left = window.innerWidth - basket.offsetWidth + 'px';
     else
@@ -89,42 +95,48 @@ function addPumpkin() {
     pumpkin.className = "pumpkin";
     pumpkin.width = pumpkinSize;
     let top = -pumpkinSize;
-    randomPumpkinX(pumpkin);
+    let speed = 2;
+    let start = () => {
+        pumpkin.style.opacity = '0';
+        top = -pumpkinSize;
+        randomPumpkinX(pumpkin);
+        let random = Math.random();
+        if (random < 0.2) speed = 1;
+        else if (random > 0.8) speed = 3;
+        else speed = 2;
+        pumpkin.style.opacity = '1';
+    };
+    start();
     document.body.insertBefore(pumpkin, basket);
 
     // add the movement and behavior to the pumpkin
-    try {
-        setInterval(() => {
-            // put the pumpkin down
-            top += speed;
-            pumpkin.style.top = top + "px";
+    setInterval(() => {
+        // put the pumpkin down
+        top += speed;
+        pumpkin.style.top = top + "px";
 
-            // check the final position of the pumpkin
-            if (top >= window.innerHeight - 100 && pumpkin.x > basket.x - 20 && pumpkin.x < basket.x + basket.offsetWidth - pumpkinSize + 20) {
-                top = -pumpkinSize;
-                randomPumpkinX(pumpkin);
-                scoreController.increaseScore(1);
-            } else if (top >= window.innerHeight - pumpkinSize - speed) {
-                top = -pumpkinSize;
-                randomPumpkinX(pumpkin);
-                scoreController.decreaseScore(1);
-            }
-        }, 10);
-    } catch (e) {}
+        // check the final position of the pumpkin
+        if (top >= window.innerHeight - 100 && pumpkin.x > basket.x - 20 && pumpkin.x < basket.x + basket.offsetWidth - pumpkinSize + 20) {
+            start();
+            scoreController.increaseScore(1);
+        } else if (top >= window.innerHeight - pumpkinSize - speed) {
+            start();
+            scoreController.decreaseScore(1);
+        }
+    }, 10);
 }
 
-// initialize base elements
+// initialize the base elements
 let basket = document.getElementById("basket");
 const record = localStorage.getItem("record");
 document.getElementById("record").innerHTML = "Рекорд: " + (record == null ? "0" : record);
 const halfWidth = basket.offsetWidth / 2;
 const pumpkinSize = 50;
-let speed = 2;
 const scoreController = new ScoreController();
 
 document.addEventListener("mousemove", e => moveBasket(e.pageX));
 
-// for the mobile device
+// for the mobile devices
 document.addEventListener("touchmove", e => moveBasket(e.changedTouches[0].clientX));
 
 document.addEventListener("DOMContentLoaded", () => {
