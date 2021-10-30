@@ -32,7 +32,8 @@ class ScoreController {
                 let recordH1 = document.createElement("h1");
                 let share = document.createElement("div");
                 recordH1.innerHTML = "Ваш новый рекорд: " + this.record;
-                share.innerHTML = VK.Share.button({title: 'Мой новый рекорд: ' + this.record}, {type: 'link', text: 'Поделиться'});
+                share.innerHTML = VK.Share.button({title: 'Мой новый рекорд: ' + this.record, url: 'https://andreydem0505.github.io/Halloween/pumpkin.png'},
+                    {type: 'link', text: 'Поделиться'});
                 div.appendChild(recordH1);
                 div.appendChild(share);
                 localStorage.setItem("record", String(this.record));
